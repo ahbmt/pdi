@@ -3,8 +3,11 @@ import numpy as np
 from PIL import Image as im
 
 # log intensity transformation
-def log_transform(img_array,rows,columns,constant):
+def log_transform(img_array,constant):
     
+    rows = np.shape(img_array)[0]
+    columns = np.shape(img_array)[1]
+
     img_array_out = np.zeros((rows,columns))
 
     for i in range(rows):
@@ -18,10 +21,7 @@ img = im.open('base_img.bmp')
 img_array = np.asarray(img)
 
 # Call the transform using the array and convert to image
-img_array_log = log_transform(img_array,
-                              np.shape(img_array)[0],
-                              np.shape(img_array)[1],
-                              constant=50)
+img_array_log = log_transform(img_array,constant=50)
 img_log = im.fromarray(img_array_log)
 
 # Create figure 1

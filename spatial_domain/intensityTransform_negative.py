@@ -3,7 +3,10 @@ import numpy as np
 from PIL import Image as im
 
 # Negative intensity transformation
-def negative_transform(img_array,rows,columns):
+def negative_transform(img_array):
+
+    rows = np.shape(img_array)[0]
+    columns = np.shape(img_array)[1]
     
     img_array_out = np.zeros((rows,columns))
 
@@ -18,9 +21,7 @@ img = im.open('base_img.bmp')
 img_array = np.asarray(img)
 
 # Call the transform using the array and convert to image
-img_array_negative = negative_transform(img_array,
-                                        np.shape(img_array)[0],
-                                        np.shape(img_array)[1])
+img_array_negative = negative_transform(img_array)
 img_negative = im.fromarray(img_array_negative) 
 
 print(np.max(img_array_negative))

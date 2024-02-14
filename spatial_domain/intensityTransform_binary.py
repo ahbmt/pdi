@@ -3,7 +3,10 @@ import numpy as np
 from PIL import Image as im
 
 # Binary intensity transformation
-def binary_transform(img_array,rows,columns):
+def binary_transform(img_array):
+
+    rows = np.shape(img_array)[0]
+    columns = np.shape(img_array)[1]
     
     img_array_out = np.zeros((rows,columns))
 
@@ -27,9 +30,7 @@ rows = np.shape(img_array)[0]
 columns = np.shape(img_array)[1]
 
 # Call the transform using the array and convert to image
-img_array_binary = binary_transform(img_array,
-                                    np.shape(img_array)[0],
-                                    np.shape(img_array)[1])
+img_array_binary = binary_transform(img_array)
 img_binary = im.fromarray(img_array_binary)
 
 # Create figure 1
