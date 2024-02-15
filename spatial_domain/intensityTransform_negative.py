@@ -1,30 +1,15 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image as im
-
-# Negative intensity transformation
-def negative_transform(img_array):
-
-    rows = np.shape(img_array)[0]
-    columns = np.shape(img_array)[1]
-    
-    img_array_out = np.zeros((rows,columns))
-
-    for i in range(rows):
-        for j in range(columns):
-            img_array_out[i][j] = 255 - img_array[i][j]
-
-    return img_array_out
+import SpatialTransforms as st
 
 # Open image and convert to array
 img = im.open('base_img.bmp')
 img_array = np.asarray(img)
 
 # Call the transform using the array and convert to image
-img_array_negative = negative_transform(img_array)
+img_array_negative = st.negative_transform(img_array)
 img_negative = im.fromarray(img_array_negative) 
-
-print(np.max(img_array_negative))
 
 # Create figure 1
 fig1 = plt.figure(1)

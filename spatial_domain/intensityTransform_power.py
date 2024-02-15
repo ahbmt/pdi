@@ -1,38 +1,22 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image as im
-
-# pow intensity transformation
-def pow_transform(img_array,constant,gamma):
-
-    rows = np.shape(img_array)[0]
-    columns = np.shape(img_array)[1]
-    
-    img_array_out = np.zeros((rows,columns))
-
-    for i in range(rows):
-        for j in range(columns):
-            if np.rint(constant*np.power(img_array[i][j],gamma)) > 255:
-                img_array_out[i][j] = 255
-            else:
-                img_array_out[i][j] = np.rint(constant*np.power(img_array[i][j],gamma))
-            
-    return img_array_out
+import SpatialTransforms as st
 
 # Open image and convert to array
 img = im.open('base_img.bmp')
 img_array = np.asarray(img)
 
 # Call the transform using the array and convert to image (gamma>1)
-img_array_pow_grt = pow_transform(img_array,constant=1,gamma=1.5)
+img_array_pow_grt = st.pow_transform(img_array,constant=1,gamma=1.5)
 img_pow_grt = im.fromarray(img_array_pow_grt)
 
 # Call the transform using the array and convert to image (gamma<1)
-img_array_pow_lwr = pow_transform(img_array,constant=1,gamma=0.67)
+img_array_pow_lwr = st.pow_transform(img_array,constant=1,gamma=0.67)
 img_pow_lwr = im.fromarray(img_array_pow_lwr)
 
 # Gamma correction
-img_array_pow_crt = pow_transform(img_array_pow_grt,constant=1,gamma=0.67)
+img_array_pow_crt = st.pow_transform(img_array_pow_grt,constant=1,gamma=0.67)
 img_pow_crt = im.fromarray(img_array_pow_crt)
 
 # Create figure 1
