@@ -4,7 +4,7 @@ from PIL import Image as im
 import SpatialTransforms as st
 
 # Open image and convert to array
-img = im.open('base_img.bmp')
+img = im.open('base_img_equalized.bmp')
 img_array = np.asarray(img)
 
 # Call the transform using the array and convert to image

@@ -1,4 +1,5 @@
 import numpy as np
+import random as rd
 
 def _operation_variables(img_array):
 
@@ -47,6 +48,7 @@ def _mask_convolution(img_array,mask):
                                         j-pad_width:j+pad_width+1]
                 matrix_arrangement = np.multiply(image_slice,mask)
                 img_array_out[i][j] = np.sum(matrix_arrangement)
+                
 
     return img_array_out[pad_width:rows_pad-pad_width,
                          pad_width:columns_pad-pad_width]
@@ -65,7 +67,7 @@ def negative_transform(img_array):
     return img_array_out
 
 # Binary intensity transformation
-def bit_slice(img_array,intensity):
+def binary_transform(img_array,intensity):
 
     # Get dimensions and output array
     img_array_out, rows, columns = _operation_variables(img_array)
@@ -102,6 +104,7 @@ def log_transform(img_array,constant):
     # Get dimensions and output array
     img_array_out, rows, columns = _operation_variables(img_array)
 
+    # Calculate log transform
     for i in range(rows):
         for j in range(columns):
             img_array_out[i][j] = np.rint(constant*np.log10(1+img_array[i][j]))
@@ -147,6 +150,29 @@ def mean_filter(img_array,mask_size,slower):
 
     return img_array_out
 
+def median_filter(img_array,mask_size):
+
+    # Pad array w/ 0 to appropriate dimensions
+    pad_width = int((mask_size-1)/2)
+
+    img_array = np.pad(img_array,
+                       ((pad_width,pad_width),),
+                        mode='constant',
+                        constant_values=((0,0),))
+
+    # Get dimensions and output array
+    img_array_out, rows_pad, columns_pad = _operation_variables(img_array)
+
+    # Obtain filtered image
+    for i in range(pad_width,rows_pad-pad_width):
+        for j in range(pad_width,columns_pad-pad_width):
+            slice = img_array[i-pad_width:i+pad_width+1,
+                                            j-pad_width:j+pad_width+1]
+            img_array_out[i][j] = np.median(slice)
+
+    return img_array_out[pad_width:rows_pad-pad_width,
+                         pad_width:columns_pad-pad_width]
+                
 # Histogram equalization
 def histogram_equalization(img_array):
 
@@ -169,3 +195,64 @@ def histogram_equalization(img_array):
     hist_equalized = _histogram(img_array_out)
 
     return img_array_out, hist_equalized, hist_original
+
+# Salt & Pepper noise
+def salt_and_pepper(img_array, threshold):
+
+    # Get dimensions and output array
+    img_array_out, rows, columns = _operation_variables(img_array)
+
+    # Apply S&P noise
+    for i in range(rows):
+        for j in range(columns):
+            noise_factor = rd.random()
+            if noise_factor < threshold:
+                img_array_out[i][j] = 0
+            elif noise_factor > 1-threshold:
+                img_array_out[i][j] = 1
+            else:
+                img_array_out[i][j] = img_array[i][j]
+
+    return img_array_out
+
+def laplacian_filter(img_array,adjusted):
+
+    mask = np.array([[-1, -1, -1],
+                     [-1,  8, -1],
+                     [-1, -1, -1]])
+    
+    # Convolution
+    img_array_out = _mask_convolution(img_array,mask)
+
+    if adjusted == True:
+        return np.rint(255*((img_array_out-np.min(img_array_out))/np.max(img_array_out)))
+    else:
+        return img_array_out
+    
+def sobel_y(img_array,adjusted):
+
+    mask = np.array([[-1, -2, -1],
+                     [ 0,  0,  0],
+                     [ 1,  2,  1]])
+    
+    # Convolution
+    img_array_out = _mask_convolution(img_array,mask)
+
+    if adjusted == True:
+        return np.rint(255*((img_array_out-np.min(img_array_out))/np.max(img_array_out)))
+    else:
+        return img_array_out
+    
+def sobel_x(img_array,adjusted):
+
+    mask = np.array([[-1,  0,  1],
+                     [-2,  0,  2],
+                     [-1,  0,  1]])
+    
+    # Convolution
+    img_array_out = _mask_convolution(img_array,mask)
+
+    if adjusted == True:
+        return np.rint(255*((img_array_out-np.min(img_array_out))/np.max(img_array_out)))
+    else:
+        return img_array_out
